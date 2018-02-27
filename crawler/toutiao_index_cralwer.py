@@ -23,13 +23,15 @@ region_id_map = {
 }
 
 
-# def is_keyword_included(keyword):
-#     url = 'https://index.toutiao.com/keyword/trends?keywords%5B%5D='+quote(keyword)
-#     request = Request(url)
-#     response = urlopen(request)
-#     data = response.read()
-#     html = data.decode('utf-8')
-#     if
+def is_keyword_included(keyword):
+    url = 'https://index.toutiao.com/keyword/trends?keywords%5B%5D='+quote(keyword)
+    request = Request(url)
+    response = urlopen(request)
+    data = response.read()
+    html = data.decode('utf-8')
+    if 'active-keyword-empty-90ad68d91f759751ad40' in html:
+        return False
+    return True
 
 def crawl_keyword_index(region, keyword, start_date, end_date):
     """爬取指定头条指数，并以name命名保存在result_saved_dir目录中"""
@@ -69,6 +71,8 @@ def crawl_and_save_toutiao_index(regions, keywords, start_date, end_date, saved_
                 index += 1
                 if index < start_row:
                     continue
+                if not is_keyword_included(keyword):
+                    continue
                 row = [region, keyword]
                 try_time = 0
                 while try_time < 10:
@@ -96,4 +100,4 @@ if __name__ == '__main__':
                         level=logging.INFO)
     saved_file_path = 'toutiao_index.csv'
     crawl_and_save_toutiao_index(common.regions, common.keywords, common.start_date, common.end_date, saved_file_path,
-                                 18)
+                                 1)
