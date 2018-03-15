@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoSuchElementException
 from utils.file_utils import save
 import pickle
 import os
@@ -90,17 +91,21 @@ def search_keyword(browser, keyword, start_time, end_time, save_dir):
         i += 1
         time.sleep(5)
         save(browser.page_source.encode('utf-8'), save_dir, keyword+'_'+start_time+'_'+end_time+"_"+str(i)+".html")
-        next_page = browser.find_element_by_link_text('下一页')
-        if next_page is not None:
-            next_page.click()
-            time.sleep(5+random.randint(2,6))
+        try:
+            next_page = browser.find_element_by_link_text('下一页')
+            if next_page is not None:
+                next_page.click()
+                time.sleep(5 + random.randint(2, 6))
+        except NoSuchElementException:
+            print("no more page")
 
 
 if __name__ == '__main__':
     save_dir = 'C:/Users/luopc/Desktop/crawler_data'
     browser = get_browser()
     date_ranges = [
-        ('2017-01-01', '2017-01-15'), ('2017-01-16', '2017-01-31'),
+        #('2017-01-01', '2017-01-15'),
+         ('2017-01-16', '2017-01-31'),
         ('2017-02-01', '2017-02-15'), ('2017-02-16', '2017-02-28'),
         ('2017-03-01', '2017-03-15'), ('2017-03-16', '2017-03-31'),
         ('2017-04-01', '2017-04-15'), ('2017-04-16', '2017-04-30'),
