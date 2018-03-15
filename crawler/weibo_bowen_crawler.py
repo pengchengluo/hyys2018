@@ -98,14 +98,14 @@ def search_keyword(browser, keyword, start_time, end_time, save_dir):
                 time.sleep(5 + random.randint(2, 6))
         except NoSuchElementException:
             print("no more page")
+            break
 
 
 if __name__ == '__main__':
     save_dir = 'C:/Users/luopc/Desktop/crawler_data'
     browser = get_browser()
     date_ranges = [
-        #('2017-01-01', '2017-01-15'),
-         ('2017-01-16', '2017-01-31'),
+        #('2017-01-01', '2017-01-15'), ('2017-01-16', '2017-01-31'),
         ('2017-02-01', '2017-02-15'), ('2017-02-16', '2017-02-28'),
         ('2017-03-01', '2017-03-15'), ('2017-03-16', '2017-03-31'),
         ('2017-04-01', '2017-04-15'), ('2017-04-16', '2017-04-30'),
