@@ -37,8 +37,8 @@ def get_browser():
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     options.add_argument('window-size=1600x900')
-    browser = webdriver.Chrome(chrome_options=options)
-    # browser = webdriver.Chrome()
+    browser = webdriver.Chrome()
+    # browser = webdriver.Chrome()chrome_options=options
     # browser = webdriver.Edge()
     # browser = webdriver.Firefox()
     cookies = load_cookies()
@@ -52,7 +52,7 @@ def get_browser():
     time.sleep(1)
     login = None
     try:
-        login = browser.find_element_by_link_text('登录')
+        login = browser.find_element_by_css_selector('ul.gn_login_list a[node-type="loginBtn"]')
     except:
         print("Can't find login button. Maybe it already login.")
     if login is not None:
@@ -71,7 +71,7 @@ def get_browser():
 
 
 def search_keyword(browser, keyword, start_time, end_time, save_dir):
-    browser.find_element_by_link_text('高级搜索').click()
+    browser.find_element_by_css_selector('#pl_common_searchTop a[node-type="advsearch"]').click()
     time.sleep(2)
     input_keyword = browser.find_element_by_css_selector('input[name="keyword"]')
     input_keyword.clear()
@@ -92,9 +92,9 @@ def search_keyword(browser, keyword, start_time, end_time, save_dir):
         time.sleep(5)
         save(browser.page_source.encode('utf-8'), save_dir, keyword+'_'+start_time+'_'+end_time+"_"+str(i)+".html")
         try:
-            next_page = browser.find_element_by_link_text('下一页')
+            next_page = browser.find_element_by_css_selector('div.W_pages a.page.next.S_txt1.S_line1')
             if next_page is not None:
-                next_page.click()
+                browser.get(next_page.get_attribute('href'))
                 time.sleep(5 + random.randint(2, 6))
         except NoSuchElementException:
             print("no more page")
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     save_dir = 'C:/Users/luopc/Desktop/crawler_data'
     browser = get_browser()
     date_ranges = [
-        #('2017-01-01', '2017-01-15'), ('2017-01-16', '2017-01-31'),
+        ('2017-01-01', '2017-01-15'), ('2017-01-16', '2017-01-31'),
         ('2017-02-01', '2017-02-15'), ('2017-02-16', '2017-02-28'),
         ('2017-03-01', '2017-03-15'), ('2017-03-16', '2017-03-31'),
         ('2017-04-01', '2017-04-15'), ('2017-04-16', '2017-04-30'),
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         ('2017-11-01', '2017-11-15'), ('2017-11-16', '2017-11-30'),
         ('2017-12-01', '2017-12-15'), ('2017-12-16', '2017-12-31'),
     ]
-    keywords = ['南海']
+    keywords = ['东海']
     for keyword in keywords:
         sub_dir = os.path.join(save_dir,keyword)
         if not os.path.exists(sub_dir):
