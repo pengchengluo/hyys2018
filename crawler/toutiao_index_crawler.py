@@ -41,6 +41,8 @@ def crawl_keyword_index(region, keyword, start_date, end_date):
     request = Request(url)
     response = urlopen(request)
     data = response.read()
+    if data.decode().startswith('<script id="script-injected">'):
+        return []
     json_data = json.loads(data)
     return json_data['trends'][keyword]
 
@@ -79,9 +81,9 @@ def crawl_and_save_toutiao_index(regions, keywords, start_date, end_date, saved_
                     try:
                         try_time += 1
                         data = crawl_keyword_index(region, keyword, start_date, end_date)
-                        time.sleep(10)
                         break
-                    except:
+                    except Exception as e:
+                        print(e)
                         logging.warning(str(index)+'['+region+','+keyword+']:'+'try '+str(try_time)+' times failed:')
                         time.sleep(10 * (try_time * try_time))
                 if try_time >= 10:
@@ -91,6 +93,7 @@ def crawl_and_save_toutiao_index(regions, keywords, start_date, end_date, saved_
                     row.extend(data)
                     writer.writerow(row)
                     output_csv.flush()
+                    time.sleep(10)
 
 
 if __name__ == '__main__':
