@@ -1,0 +1,26 @@
+import csv
+
+from utils import index
+from utils.constant_data import provinces
+
+
+if __name__=='__main__':
+    survey_file = 'C:/Users/luopc/Desktop/hyys_2016_2018/survey/survey_converted_2018-04-10.csv'
+    survey_raw_file = 'C:/Users/luopc/Desktop/hyys_2016_2018/survey/survey_result_2018-04-10.csv'
+    with open(survey_file, mode='w', encoding='GBK', newline='') as output_csv, \
+            open(survey_raw_file, mode='r', encoding='GBK', newline='') as input_csv:
+        writer = csv.writer(output_csv)
+        reader = csv.DictReader(input_csv)
+        area_map = {}
+        for record in reader:
+            area_map[record['省份']] = record
+        writer.writerow(['order', 'level3', 'area', 'score_std', 'score_avg_std', 'score_weight'])
+        level3_cnt = 0
+        for level1 in index.get_level1():
+            for level2 in index.get_level2_by_level1(level1):
+                for level3 in index.get_level3_by_level2(level2):
+                    level3_cnt += 1
+                    for province in provinces:
+                        record = [level3_cnt, level3, province, area_map[province][level3], area_map[province][level3], area_map[province][level3]]
+                        writer.writerow(record)
+
